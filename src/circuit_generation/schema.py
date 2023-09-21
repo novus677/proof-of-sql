@@ -1,6 +1,9 @@
 from typing import List
 
 class Schema:
+    '''
+    This class defines a schema for a table in a database.
+    '''
     def __init__(self, num_columns: int, column_names: List[str]):
         self.num_columns = num_columns
         self.column_names = column_names

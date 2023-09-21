@@ -34,6 +34,9 @@ fn select_indices<F: ScalarField>(
         .collect();
 
     let range = RangeChip::default(lookup_bits);
+
+
+    println!("out: {:?}", out.iter().map(|x| x.value()).collect::<Vec<_>>())
 }
 
 fn main() {

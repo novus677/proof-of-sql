@@ -34,37 +34,41 @@ fn select_indices<F: ScalarField>(
         .collect();
 
     let range = RangeChip::default(lookup_bits);
-    let intermediate9: Vec<AssignedValue<F>> =
+
+    let intermediate2: Vec<AssignedValue<F>> =
         db[0].iter().zip(db[1].iter()).map(|(&x, &y)| range.gate().is_equal(ctx, x, y)).collect();
     let val4 = ctx.load_constant(F::from(0));
-    let intermediate10: Vec<AssignedValue<F>> =
+    let intermediate5: Vec<AssignedValue<F>> =
         db[0].iter().map(|&x| range.gate().is_equal(ctx, x, val4)).collect();
-    let intermediate11: Vec<AssignedValue<F>> = intermediate9
+    let intermediate6: Vec<AssignedValue<F>> = intermediate2
         .iter()
-        .zip(intermediate10.iter())
+        .zip(intermediate5.iter())
         .map(|(&x, &y)| range.gate().or(ctx, x, y))
         .collect();
-    let val6 = ctx.load_constant(F::from(0));
-    let intermediate12: Vec<AssignedValue<F>> = db[1]
+    let intermediate7 = intermediate6;
+    let val9 = ctx.load_constant(F::from(0));
+    let intermediate10: Vec<AssignedValue<F>> = db[1]
         .iter()
         .map(|&x| {
             let plus_one = range.gate().add(ctx, x, Constant(F::one()));
-            range.is_less_than(ctx, val6, plus_one, 10)
+            range.is_less_than(ctx, val9, plus_one, 10)
         })
         .collect();
-    let intermediate13: Vec<AssignedValue<F>> = intermediate11
+    let intermediate11: Vec<AssignedValue<F>> = intermediate7
         .iter()
-        .zip(intermediate12.iter())
+        .zip(intermediate10.iter())
         .map(|(&x, &y)| range.gate().and(ctx, x, y))
         .collect();
-    let val8 = ctx.load_constant(F::from(5));
+    let val13 = ctx.load_constant(F::from(5));
     let intermediate14: Vec<AssignedValue<F>> =
-        db[1].iter().map(|&x| range.is_less_than(ctx, x, val8, 10)).collect();
-    let intermediate15: Vec<AssignedValue<F>> = intermediate13
+        db[1].iter().map(|&x| range.is_less_than(ctx, x, val13, 10)).collect();
+    let out: Vec<AssignedValue<F>> = intermediate11
         .iter()
         .zip(intermediate14.iter())
         .map(|(&x, &y)| range.gate().and(ctx, x, y))
         .collect();
+
+    println!("out: {:?}", out.iter().map(|x| x.value()).collect::<Vec<_>>())
 }
 
 fn main() {
